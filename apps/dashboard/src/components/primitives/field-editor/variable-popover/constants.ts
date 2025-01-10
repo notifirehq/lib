@@ -188,14 +188,6 @@ export const TRANSFORMERS: Transformer[] = [
     params: [{ placeholder: 'Format (e.g. "%Y-%m-%d")', description: 'strftime format', type: 'string' }],
   },
   {
-    label: 'Default',
-    value: 'default',
-    hasParam: true,
-    description: 'Use default value if input is empty',
-    example: '"" | default: "¯\\_(ツ)_/¯" → ¯\\_(ツ)_/¯',
-    params: [{ placeholder: 'Default value', type: 'string' }],
-  },
-  {
     label: 'JSON',
     value: 'json',
     description: 'Convert object to JSON string',
@@ -265,5 +257,17 @@ export const TRANSFORMERS: Transformer[] = [
     value: 'url_decode',
     description: 'Decode URL-encoded string',
     example: '"fun%20%26%20games" | url_decode → fun & games',
+  },
+  {
+    label: 'Digest',
+    value: 'digest',
+    hasParam: true,
+    description: 'Format a list of names with optional key path and separator',
+    example: 'events | digest: 2, "name", ", " → John, Jane and 3 others',
+    params: [
+      { placeholder: 'Max names to show', type: 'number' },
+      { placeholder: 'Object key path (optional)', type: 'string' },
+      { placeholder: 'Custom separator (optional)', type: 'string' },
+    ],
   },
 ];
