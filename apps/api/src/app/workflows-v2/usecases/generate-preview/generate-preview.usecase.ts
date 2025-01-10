@@ -33,7 +33,7 @@ import { GeneratePreviewCommand } from './generate-preview.command';
 import { BuildPayloadSchemaCommand } from '../build-payload-schema/build-payload-schema.command';
 import { BuildPayloadSchema } from '../build-payload-schema/build-payload-schema.usecase';
 import { Variable } from '../../util/template-parser/liquid-parser';
-import { keysToObject } from '../../util/utils';
+import { keysToObject, mergeCommonObjectKeys } from '../../util/utils';
 import { isObjectTipTapNode } from '../../util/tip-tap.util';
 import { buildVariables } from '../../util/build-variables';
 
@@ -161,7 +161,13 @@ export class GeneratePreviewUsecase {
       finalVariablesExample = previewTemplateData.variablesExample;
     }
 
-    finalVariablesExample = _.merge(finalVariablesExample, commandVariablesExample || {});
+    if (commandVariablesExample && Object.keys(commandVariablesExample).length > 0) {
+      // merge only values of common keys between finalVariablesExample and commandVariablesExample
+      finalVariablesExample = mergeCommonObjectKeys(
+        commandVariablesExample as Record<string, unknown>,
+        finalVariablesExample as Record<string, unknown>
+      );
+    }
 
     return finalVariablesExample;
   }
