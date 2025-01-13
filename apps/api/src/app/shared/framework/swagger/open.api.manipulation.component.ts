@@ -35,7 +35,6 @@ function liftDataProperty(scope) {
 }
 export function removeEndpointsWithoutApiKey<T>(openApiDocument: T): T {
   const parsedDocument = JSON.parse(JSON.stringify(openApiDocument));
-
   if (!parsedDocument.paths) {
     throw new Error('Invalid OpenAPI document');
   }

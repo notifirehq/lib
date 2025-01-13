@@ -99,6 +99,7 @@ const options = new DocumentBuilder()
     `An organization serves as a separate entity within your Novu account. Each organization you create has its own separate integration store, workflows, subscribers, and API keys. This separation of resources allows you to manage multi-tenant environments and separate domains within a single account.`,
     { url: 'https://docs.novu.co/platform/organizations' }
   )
+  .addTag('Admin', 'testing', { url: 'https://docs.novu.co/platform/organizations' })
   .addTag(
     'Execution Details',
     `Execution details are used to track the execution of a workflow. They provided detailed information on the execution of a workflow, including the status of each step, the input and output of each step, and the overall status of the execution.`,
@@ -153,12 +154,12 @@ function sdkSetup(app: INestApplication, document: OpenAPIObject) {
   document['x-speakeasy-retries'] = {
     strategy: 'backoff',
     backoff: {
-      initialInterval: 500,
+      initialInterval: 1000,
       maxInterval: 30000,
       maxElapsedTime: 3600000,
       exponent: 1.5,
     },
-    statusCodes: ['408', '409', '429', '5XX'],
+    statusCodes: [408, 422, 429, '5XX'],
     retryConnectionErrors: true,
   };
 

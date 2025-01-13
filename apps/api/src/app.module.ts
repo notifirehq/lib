@@ -150,8 +150,8 @@ if (process.env.SEGMENT_TOKEN) {
   modules.push(AnalyticsModule);
 }
 
+modules.push(TestingModule);
 if (process.env.NODE_ENV === 'test') {
-  modules.push(TestingModule);
 }
 
 modules.push(
