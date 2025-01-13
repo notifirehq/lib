@@ -64,8 +64,8 @@ function isVariableNode(node: JSONContent): node is VariableNodeContent {
   return node.type === 'variable';
 }
 
-function isIterableVariable(node: JSONContent): node is IterableVariable {
-  return isVariableNode(node) && Boolean(node.attrs?.id?.startsWith('iterable.'));
+function isIterableVariable(node: JSONContent, eachVariable: string): node is IterableVariable {
+  return isVariableNode(node) && Boolean(node.attrs?.id?.startsWith(eachVariable));
 }
 
 function processForLoopNode(node: JSONContent): JSONContent {
@@ -78,24 +78,38 @@ function processForLoopNode(node: JSONContent): JSONContent {
     return node;
   }
 
-  const content = node.content.map((contentNodeChild) => {
-    if (!isIterableVariable(contentNodeChild)) {
-      return processNode(contentNodeChild);
-    }
+  const processContentArray = (contentArray: JSONContent[]): JSONContent[] => {
+    return contentArray.map((contentNode) => {
+      // If this node has nested content, process it first
+      if (contentNode.content && Array.isArray(contentNode.content)) {
+        return {
+          ...contentNode,
+          content: processContentArray(contentNode.content),
+        };
+      }
 
-    const idWithoutIterablePrefix = contentNodeChild.attrs.id.replace('iterable.', '');
-    const liquidId = `{{${eachVariable}[0].${idWithoutIterablePrefix}}}`;
+      // Check if this is an iterable variable node
+      if (isIterableVariable(contentNode, eachVariable)) {
+        const idWithoutIterablePrefix = contentNode.attrs.id.replace(`${eachVariable}.`, '');
+        const liquidId = `{{${eachVariable}[0].${idWithoutIterablePrefix}}}`;
 
-    return {
-      ...contentNodeChild,
-      attrs: {
-        ...contentNodeChild.attrs,
-        id: liquidId,
-      },
-    };
-  });
+        return {
+          ...contentNode,
+          attrs: {
+            ...contentNode.attrs,
+            id: liquidId,
+          },
+        };
+      } else {
+        return processNode(contentNode);
+      }
+    });
+  };
 
-  return { ...node, content };
+  return {
+    ...node,
+    content: processContentArray(node.content),
+  };
 }
 
 function processNode(node: JSONContent): JSONContent {
