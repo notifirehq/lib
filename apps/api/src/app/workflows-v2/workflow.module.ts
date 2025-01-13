@@ -5,19 +5,20 @@ import {
   DeleteWorkflowUseCase,
   GetPreferences,
   GetWorkflowByIdsUseCase,
+  TierRestrictionsValidateUsecase,
   UpdateWorkflow,
   UpsertControlValuesUseCase,
   UpsertPreferences,
-  TierRestrictionsValidateUsecase,
 } from '@novu/application-generic';
 
 import { CommunityOrganizationRepository } from '@novu/dal';
-import { SharedModule } from '../shared/shared.module';
-import { MessageTemplateModule } from '../message-template/message-template.module';
-import { ChangeModule } from '../change/change.module';
 import { AuthModule } from '../auth/auth.module';
+import { BridgeModule } from '../bridge';
+import { ChangeModule } from '../change/change.module';
+import { HydrateEmailSchemaUseCase } from '../environments-v1/usecases/output-renderers';
 import { IntegrationModule } from '../integrations/integrations.module';
-import { WorkflowController } from './workflow.controller';
+import { MessageTemplateModule } from '../message-template/message-template.module';
+import { SharedModule } from '../shared/shared.module';
 import {
   BuildAvailableVariableSchemaUsecase,
   BuildDefaultPayloadUsecase,
@@ -34,12 +35,11 @@ import {
   UpsertWorkflowUseCase,
   ValidatePlaceholderUsecase,
 } from './usecases';
-import { BridgeModule } from '../bridge';
-import { HydrateEmailSchemaUseCase } from '../environments-v1/usecases/output-renderers';
-import { OverloadContentDataOnWorkflowUseCase } from './usecases/overload-content-data';
-import { PatchWorkflowUsecase } from './usecases/patch-workflow';
-import { PatchStepUsecase } from './usecases/patch-step-data/patch-step.usecase';
 import { BuildPayloadSchema } from './usecases/build-payload-schema/build-payload-schema.usecase';
+import { OverloadContentDataOnWorkflowUseCase } from './usecases/overload-content-data';
+import { PatchStepUsecase } from './usecases/patch-step-data/patch-step.usecase';
+import { PatchWorkflowUsecase } from './usecases/patch-workflow';
+import { WorkflowController } from './workflow.controller';
 
 const DAL_REPOSITORIES = [CommunityOrganizationRepository];
 
