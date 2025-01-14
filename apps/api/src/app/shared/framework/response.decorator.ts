@@ -1,4 +1,4 @@
-import { ApiExtraModels, ApiResponseOptions, getSchemaPath } from '@nestjs/swagger';
+import { ApiExtraModels, ApiHeader, ApiResponseOptions, getSchemaPath } from '@nestjs/swagger';
 import { applyDecorators, Type } from '@nestjs/common';
 import { customResponseDecorators } from './swagger/responses.decorator';
 import { COMMON_RESPONSES } from './constants/responses.schema';
@@ -177,8 +177,15 @@ export const ApiCommonResponses = () => {
   return applyDecorators(
     ...decorators,
     ApiResponse(ErrorDto, 400, false, false),
+    ApiResponse(ErrorDto, 401, false, false),
+    ApiResponse(ErrorDto, 500, false, false),
     ApiResponse(ErrorDto, 404, false, false),
     ApiResponse(ErrorDto, 409, false, false),
-    ApiResponse(ValidationErrorDto, 422, false, false)
+    ApiResponse(ValidationErrorDto, 422, false, false),
+    ApiHeader({
+      name: 'Idempotency-Key',
+      required: false,
+      description: 'A header for idempotency purposes ',
+    })
   );
 };

@@ -15,8 +15,8 @@ import {
   CacheService,
   GetFeatureFlag,
   GetFeatureFlagCommand,
-  Instrument,
   HttpResponseHeaderKeysEnum,
+  Instrument,
 } from '@novu/application-generic';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -53,7 +53,7 @@ export class IdempotencyInterceptor implements NestInterceptor {
     const user = this.getReqUser(context);
     const { organizationId, environmentId, _id } = user;
 
-    const isEnabled = await this.getFeatureFlag.execute(
+    return await this.getFeatureFlag.execute(
       GetFeatureFlagCommand.create({
         key: FeatureFlagsKeysEnum.IS_API_IDEMPOTENCY_ENABLED,
         environmentId,
@@ -61,8 +61,6 @@ export class IdempotencyInterceptor implements NestInterceptor {
         userId: _id,
       })
     );
-
-    return isEnabled;
   }
 
   @Instrument()

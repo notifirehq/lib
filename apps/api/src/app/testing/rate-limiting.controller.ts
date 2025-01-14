@@ -1,9 +1,11 @@
 import { ApiRateLimitCategoryEnum, ApiRateLimitCostEnum } from '@novu/shared';
 import { Controller, Get } from '@nestjs/common';
+import { ApiExcludeController } from '@nestjs/swagger';
 import { ThrottlerCategory, ThrottlerCost } from '../rate-limiting/guards';
 import { ExternalApiAccessible } from '../auth/framework/external-api.decorator';
 import { UserAuthentication } from '../shared/framework/swagger/api.key.security';
 
+@ApiExcludeController()
 @Controller('/rate-limiting')
 @UserAuthentication()
 export class TestApiRateLimitController {
