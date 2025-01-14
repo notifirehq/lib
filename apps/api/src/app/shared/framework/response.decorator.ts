@@ -1,7 +1,6 @@
 import {
   ApiExpectationFailedResponse,
   ApiExtraModels,
-  ApiHeader,
   ApiHttpVersionNotSupportedResponse,
   ApiLengthRequiredResponse,
   ApiNonAuthoritativeInformationResponse,
@@ -332,11 +331,6 @@ export const ApiCommonResponses = () => {
     ApiResponse(ErrorDto, 414, false, false),
     ApiResponse(ErrorDto, 415, false, false),
     ApiResponse(ErrorDto, 500, false, false),
-    ApiResponse(ValidationErrorDto, 422, false, false),
-    ApiHeader({
-      name: 'Idempotency-Key',
-      required: false,
-      description: 'A header for idempotency purposes ',
-    })
+    ApiResponse(ValidationErrorDto, 422, false, false)
   );
 };
