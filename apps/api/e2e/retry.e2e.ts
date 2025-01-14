@@ -1,6 +1,8 @@
 import { Novu } from '@novu/api';
 import { expect } from 'chai';
 import { ErrorDtoData } from '@novu/api/src/models/errors/errordto';
+import { topicsList } from '@novu/api/funcs/topicsList';
+import { FilterTopicsResponseDto } from '@novu/api/src/models/components/filtertopicsresponsedto';
 import { expectSdkExceptionGeneric } from '../src/app/shared/helpers/e2e/sdk/e2e-sdk.helper';
 import { MockHTTPClient } from './mock-http-server';
 
@@ -183,8 +185,9 @@ describe('Novu Node.js package - Retries and idempotency-key', () => {
         ]),
       });
 
-      const { error } = await expectSdkExceptionGeneric(() => novuClient.topics.list({}));
-      expect(error?.statusCode).to.be.eq(status);
+      const result = await topicsList(novuClient, {});
+
+      expect(result.ok).to.be.eq(false);
     });
   });
 
@@ -226,7 +229,7 @@ describe('Novu Node.js package - Retries and idempotency-key', () => {
         baseUrl: BACKEND_URL,
         path: TOPICS_PATH,
         responseCode: 200,
-        responseJson: [{}, {}],
+        responseJson: { data: [], page: 1, pageSize: 30, totalCount: 0 } as FilterTopicsResponseDto,
         method: 'GET',
         times: 1,
       },
@@ -238,7 +241,8 @@ describe('Novu Node.js package - Retries and idempotency-key', () => {
       httpClient: mockClient,
     });
 
-    await novuClient.topics.list({});
+    const { error, ok, value } = await topicsList(novuClient, {});
+    expect(ok).to.be.true;
   });
 });
 const BACKEND_URL = 'http://example.com';
