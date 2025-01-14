@@ -11,8 +11,8 @@ import { CreateSessionCommand } from './usecases/create-session/create-session.c
 import { ExternalApiAccessible } from '../auth/framework/external-api.decorator';
 import { ProductFeature } from '../shared/decorators/product-feature.decorator';
 import { UserAuthentication } from '../shared/framework/swagger/api.key.security';
-import { SdkGroupName } from '../shared/framework/swagger/sdk.decorators';
-import { ApiCommonResponses, ApiOkResponse } from '../shared/framework/response.decorator';
+import { SdkGroupName, SdkMethodName } from '../shared/framework/swagger/sdk.decorators';
+import { ApiCommonResponses, ApiCreatedResponse, ApiOkResponse } from '../shared/framework/response.decorator';
 
 export class IdempotencyResponse {
   @ApiProperty({
@@ -58,22 +58,11 @@ export class TestingController {
     return await this.createSessionUsecase.execute(command);
   }
 
-  /*
-   * @Post('/seed')
-   * async seedData(@Body() body: SeedDataBodyDto): Promise<{ password_user: UserEntity }> {
-   *   if (process.env.NODE_ENV !== 'test') throw new NotFoundException();
-   *   const command = SeedDataCommand.create({});
-   */
-
-  /*
-   *   return await this.seedDataUsecase.execute(command);
-   * }
-   */
-
   @ExternalApiAccessible()
   @UserAuthentication()
-  @ApiOkResponse({ type: IdempotencyResponse })
+  @ApiCreatedResponse({ type: IdempotencyResponse, status: 201 })
   @Post('/idempotency')
+  @SdkMethodName('idempotencyPost')
   async idempotency(@Body() body: IdempotencyBodyDto): Promise<IdempotencyResponse> {
     if (process.env.NODE_ENV !== 'test') throw new NotFoundException();
 
@@ -91,6 +80,7 @@ export class TestingController {
   }
   @ApiOkResponse({ type: IdempotencyResponse })
   @ExternalApiAccessible()
+  @SdkMethodName('idempotencyGet')
   @Get('/idempotency')
   async idempotencyGet(): Promise<IdempotencyResponse> {
     if (process.env.NODE_ENV !== 'test') throw new NotFoundException();

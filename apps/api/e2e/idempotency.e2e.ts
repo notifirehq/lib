@@ -26,22 +26,22 @@ describe('Idempotency Test', async () => {
 
     it('should return cached same response for duplicate requests', async () => {
       const key = `1`;
-      const res1 = await novu.admin.testingControllerIdempotency({ data: 201 }, key);
-      const res2 = await novu.admin.testingControllerIdempotency({ data: 201 }, key);
-      expect(res1.result.number).to.equal(res2.result.number);
+      const res1 = await novu.admin.idempotencyPost({ data: 201 }, key);
+      const res2 = await novu.admin.idempotencyPost({ data: 201 }, key);
+      expect(res1.result).to.equal(res2.result);
       expect(res1.headers[HttpResponseHeaderKeysEnum.IDEMPOTENCY_KEY.toLowerCase()]).to.eq(key);
       expect(res2.headers[HttpResponseHeaderKeysEnum.IDEMPOTENCY_KEY.toLowerCase()]).to.eq(key);
       expect(res2.headers[HttpResponseHeaderKeysEnum.IDEMPOTENCY_REPLAY.toLowerCase()]).to.eq('true');
     });
     it('should return cached and use correct cache key when apiKey is used', async () => {
       const key = `2`;
-      const res1 = await novu.admin.testingControllerIdempotency({ data: 201 }, key);
+      const res1 = await novu.admin.idempotencyPost({ data: 201 }, key);
       const cacheKey = `test-${session.organization._id}-${key}`;
       session.testServer?.getHttpServer();
 
       const cacheVal = JSON.stringify(JSON.parse(await cacheService?.get(cacheKey)!).data);
       expect(JSON.stringify(res1.result)).to.eq(cacheVal);
-      const res2 = await novu.admin.testingControllerIdempotency({ data: 201 }, key);
+      const res2 = await novu.admin.idempotencyPost({ data: 201 }, key);
       expect(res1.result.number).to.equal(res2.result.number);
       expect(res1.headers[HttpResponseHeaderKeysEnum.IDEMPOTENCY_KEY.toLowerCase()]).to.eq(key);
       expect(res2.headers[HttpResponseHeaderKeysEnum.IDEMPOTENCY_KEY.toLowerCase()]).to.eq(key);
@@ -49,13 +49,13 @@ describe('Idempotency Test', async () => {
     });
     it('should return cached and use correct cache key when authToken and apiKey combination is used', async () => {
       const key = `3`;
-      const res1 = await novu.admin.testingControllerIdempotency({ data: 201 }, key);
+      const res1 = await novu.admin.idempotencyPost({ data: 201 }, key);
       const cacheKey = `test-${session.organization._id}-${key}`;
       session.testServer?.getHttpServer();
 
       const cacheVal = JSON.stringify(JSON.parse(await cacheService?.get(cacheKey)!).data);
       expect(res1.result).to.eq(cacheVal);
-      const res2 = await novu.admin.testingControllerIdempotency({ data: 201 }, key);
+      const res2 = await novu.admin.idempotencyPost({ data: 201 }, key);
       expect(res1.result.number).to.equal(res2.result.number);
       expect(res1.headers[HttpResponseHeaderKeysEnum.IDEMPOTENCY_KEY.toLowerCase()]).to.eq(key);
       expect(res2.headers[HttpResponseHeaderKeysEnum.IDEMPOTENCY_KEY.toLowerCase()]).to.eq(key);
