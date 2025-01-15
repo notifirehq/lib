@@ -150,9 +150,7 @@ if (process.env.SEGMENT_TOKEN) {
   modules.push(AnalyticsModule);
 }
 
-if (process.env.NODE_ENV === 'test') {
-  modules.push(TestingModule);
-}
+modules.push(TestingModule);
 
 modules.push(
   NovuModule.register({
